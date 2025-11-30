@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>CONTACT – NOK / Naoki Hata</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --fg: #ffffff;
+      --muted: #d0d0d0;
+      --accent: #f5f16b;
+      --border: rgba(255,255,255,0.16);
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      background: #000;
+      font-family: var(--font);
+      color: var(--fg);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ▼ パララックス背景動画 */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .bg-video {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      will-change: transform;
+    }
+
+    /* ▼ ページ全体 */
+    .page {
+      position: relative;
+      z-index: 10;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 18px 80px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ▼ ヘッダー（ロゴ＋メニュー） */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 10px 0;
+      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.45);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-logo {
+      width: 110px;
+      height: auto;
+      filter: drop-shadow(0 0 12px rgba(0,0,0,0.6));
+    }
+
+    nav {
+      display: flex;
+      gap: 22px;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    nav a {
+      color: var(--muted);
+      position: relative;
+      padding-bottom: 3px;
+      transition: color .2s;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: 0;
+      height: 1px;
+      width: 0;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--fg);
+    }
+
+    nav a:hover::after,
+    nav a.active::after {
+      width: 100%;
+    }
+
+    /* ▼ メイン（中央にカード） */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .contact-card {
+      max-width: 520px;
+      width: 100%;
+      background: rgba(0,0,0,0.70);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding: 26px 24px 24px;
+      text-align: left;
+    }
+
+    .contact-label {
+      font-size: 11px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .contact-title {
+      font-size: 22px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .contact-lead {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .contact-section-title {
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+
+    .contact-list {
+      list-style: none;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .contact-list a {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .contact-note {
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .mailto-button {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.8);
+      background: rgba(0,0,0,0.4);
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .mailto-button:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      padding-bottom: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding-inline: 14px;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      nav {
+        font-size: 11px;
+        gap: 16px;
+      }
+      main {
+        align-items: flex-start;
+      }
+      .contact-card {
+        margin-top: 34px;
+        padding: 22px 18px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ▼ 背景パララックス動画 -->
+  <div class="bg-layer">
+    <video id="bgVideo" class="bg-video" autoplay muted loop playsinline>
+      <!-- ★ 必要なら別の背景動画に差し替え可 -->
+      <source src="SCS_noize.mov" type="video/mp4" />
+    </video>
+  </div>
+
+  <div class="page">
+    <!-- ▼ ヘッダー -->
+    <header>
+      <div class="header-inner">
+        <a href="index.html">
+          <img src="NOK_logo_yellow.png" alt="NOK Logo" class="header-logo" />
+        </a>
+        <nav>
+          <a href="works.html">WORKS</a>
+          <a href="service.html">SERVICE</a>
+          <a href="contact.html" class="active">CONTACT</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ▼ 中央のコンタクトカード -->
+    <main>
+      <section class="contact-card">
+        <div class="contact-label">CONTACT</div>
+        <h1 class="contact-title">GET IN TOUCH</h1>
+        <p class="contact-lead">
+          スポーツチームのPV、企業ムービー、イベントハイライトなど、<br />
+          「こういう映像って作れますか？」というラフなご相談からでも大丈夫です。
+        </p>
+
+        <h2 class="contact-section-title">G-MAIL</h2>
+        <ul class="contact-list">
+          <!-- ★ あなたのメールアドレスに変更 -->
+          <li><a href="nok.works.scs.gmail.com">nok.works.scs@gmail.com</a></li>
+        </ul>
+
+        <h2 class="contact-section-title">SNS</h2>
+        <ul class="contact-list">
+          <!-- ★ 実際のアカウントURLに差し替え -->
+          <li>Instagram：<a href="https://www.instagram.com/nok.works_byscs?igsh=bnkxemVyNzZtdHhk&utm_source=qr" target="_blank" rel="noreferrer">@nok.works_byscs</a></li>
+          <!--<li>X（Twitter）：<a href="https://x.com/your_x_account" target="_blank" rel="noreferrer">@your_x_account</a></li>-->
+        </ul>
+
+        <p class="contact-note">
+          ・案件の概要（目的／使用媒体／尺のイメージ／おおよそのスケジュール）を添えてご連絡いただけるとスムーズです。<br />
+          ・まだふわっとした段階でも、「一緒に考えてほしい」という形でのご相談も歓迎しています。
+        </p>
+
+        <!-- ワンクリックでメーラーを開くボタン -->
+        <a class="mailto-button" href="mailto:your.mail@example.com?subject=映像制作のご相談">
+          SEND MAIL
+        </a>
+      </section>
+    </main>
+
+    <footer>
+      © <span id="year"></span> NOK.WORKS / SEVEN CREATIVE STUDIO
+    </footer>
+  </div>
+
+  <script>
+    // 年号
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // パララックス背景
+    const bgVideo = document.getElementById("bgVideo");
+    window.addEventListener("scroll", () => {
+      const y = window.scrollY * 0.12;
+      bgVideo.style.transform = `translateY(${y}px)`;
+    });
+  </script>
+</body>
+</html>

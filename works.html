@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>WORKS – NOK / Naoki Hata</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --fg: #ffffff;
+      --muted: #d0d0d0;
+      --accent: #f5f16b;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      background: #000;
+      font-family: var(--font);
+      color: var(--fg);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ▼ パララックス背景動画 */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .bg-video {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      will-change: transform;
+    }
+
+    /* ▼ ページ本体 */
+    .page {
+      position: relative;
+      z-index: 10;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 18px 80px;
+    }
+
+    /* ▼ ヘッダー（ロゴ＋メニュー） */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 10px 0;
+      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.45);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-logo {
+      width: 110px;
+      height: auto;
+      filter: drop-shadow(0 0 12px rgba(0,0,0,0.6));
+    }
+
+    nav {
+      display: flex;
+      gap: 22px;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    nav a {
+      color: var(--muted);
+      position: relative;
+      padding-bottom: 3px;
+      transition: color .2s;
+    }
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: 0;
+      height: 1px;
+      width: 0;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+    nav a:hover,
+    nav a.active {
+      color: var(--fg);
+    }
+    nav a:hover::after,
+    nav a.active::after {
+      width: 100%;
+    }
+
+    /* ▼ 見出し */
+    .works-header {
+      text-align: center;
+      padding: 46px 0 20px;
+    }
+    .section-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .25em;
+    }
+    .section-title {
+      margin-top: 8px;
+      font-size: 28px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    /* ▼ グリッド */
+    .works-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    /* ▼ WORK ITEM */
+    .work-item {
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(6px);
+      font-size: 12px;
+    }
+
+    .thumb-wrap {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #111;
+      cursor: pointer;
+    }
+
+    .thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s ease;
+    }
+
+    .thumb-wrap:hover .thumb-img {
+      transform: scale(1.05);
+    }
+
+    .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, rgba(0,0,0,0.0), rgba(0,0,0,0.55));
+      opacity: 0;
+      transition: opacity .25s ease;
+      pointer-events: none;
+    }
+
+    .thumb-wrap:hover .thumb-overlay {
+      opacity: 1;
+    }
+
+    .play-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(245,241,107,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.8);
+      box-shadow: 0 0 16px rgba(0,0,0,0.9);
+    }
+
+    .play-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+      margin-left: 2px;
+    }
+
+    /* ▼ YouTubeプレビュー iframe コンテナ（hover時だけ表示） */
+    .preview-container {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .25s ease;
+      pointer-events: none; /* クリックは親divに任せる */
+    }
+    .preview-container.active {
+      opacity: 1;
+    }
+    .preview-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .work-body {
+      padding: 12px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .client { color: var(--muted); }
+    .work-title-text { font-size: 13px; }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      padding-bottom: 30px;
+    }
+
+    /* ▼ レスポンシブ */
+    @media (max-width: 960px) {
+      .works-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px) {
+      .works-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      nav {
+        font-size: 11px;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ▼ 背景パララックス動画 -->
+  <div class="bg-layer">
+    <video id="bgVideo" class="bg-video" autoplay muted loop playsinline>
+      <!-- ★ トップと同じ or WORKS専用背景に差し替え -->
+      <source src="SCS_noize.mov" type="video/mp4" />
+    </video>
+  </div>
+
+  <div class="page">
+    <!-- ▼ ヘッダー -->
+    <header>
+      <div class="header-inner">
+        <a href="index.html">
+          <img src="NOK_logo_yellow.png" alt="NOK Logo" class="header-logo" />
+        </a>
+        <nav>
+          <a href="works.html" class="active">WORKS</a>
+          <a href="service.html">SERVICE</a>
+          <a href="contact.html">CONTACT</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ▼ 見出し -->
+    <div class="works-header">
+      <div class="section-label">WORKS</div>
+      <h1 class="section-title">VISUAL WORKS</h1>
+    </div>
+
+    <!-- ▼ 実績 6つ（YouTube） -->
+    <section class="works-grid">
+
+      <!-- ①-->
+      <article class="work-item">
+        <div class="thumb-wrap yt-item" data-video-id="QOrTbwHlR9E">
+          <img
+            class="thumb-img"
+            src="https://img.youtube.com/vi/QOrTbwHlR9E/hqdefault.jpg"
+            alt="スポーツPV"
+          />
+          <div class="preview-container"></div>
+          <div class="thumb-overlay">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"></polygon></svg>
+            </div>
+          </div>
+        </div>
+        <div class="work-body">
+          <div class="client">慶應義塾大学柔道部</div>
+          <div class="work-title-text">早慶柔道対抗戦2025　慶應義塾大学柔道部PV</div>
+        </div>
+      </article>
+
+      <!-- ②-->
+      <article class="work-item">
+        <div class="thumb-wrap yt-item" data-video-id="Hy2as4bY068">
+          <img
+            class="thumb-img"
+            src="https://img.youtube.com/vi/Hy2as4bY068/hqdefault.jpg"
+            alt="企業周年ムービー"
+          />
+          <div class="preview-container"></div>
+          <div class="thumb-overlay">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"></polygon></svg>
+            </div>
+          </div>
+        </div>
+        <div class="work-body">
+          <div class="client">早稲田大学柔道部</div>
+          <div class="work-title-text">早慶柔道対抗戦2025　早稲田大学柔道部PV</div>
+        </div>
+      </article>
+
+      <!-- ③-->
+      <article class="work-item">
+        <div class="thumb-wrap yt-item" data-video-id="H83NcI09DM0">
+          <img
+            class="thumb-img"
+            src="https://img.youtube.com/vi/H83NcI09DM0/hqdefault.jpg"
+            alt="ファッションショーハイライト"
+          />
+          <div class="preview-container"></div>
+          <div class="thumb-overlay">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"></polygon></svg>
+            </div>
+          </div>
+        </div>
+        <div class="work-body">
+          <div class="client">早稲田大学柔道部　慶應義塾大学柔道部</div>
+          <div class="work-title-text">早慶柔道対抗戦2025PV</div>
+        </div>
+      </article>
+
+      <!-- ④ -->
+      <article class="work-item">
+        <div class="thumb-wrap yt-item" data-video-id="zAxp1mHwz78">
+          <img
+            class="thumb-img"
+            src="https://img.youtube.com/vi/zAxp1mHwz78/hqdefault.jpg"
+            alt="WORK 4"
+          />
+          <div class="preview-container"></div>
+          <div class="thumb-overlay">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"></polygon></svg>
+            </div>
+          </div>
+        </div>
+        <div class="work-body">
+          <div class="client">慶應義塾大学柔道部</div>
+          <div class="work-title-text">慶應義塾大学柔道部2025新歓PV</div>
+        </div>
+      </article>
+
+      <!-- ⑤ -->
+      <article class="work-item">
+        <div class="thumb-wrap yt-item" data-video-id="fwHMlo-gP2U">
+          <img
+            class="thumb-img"
+            src="https://img.youtube.com/vi/fwHMlo-gP2U/hqdefault.jpg"
+            alt="WORK 5"
+          />
+          <div class="preview-container"></div>
+          <div class="thumb-overlay">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"></polygon></svg>
+            </div>
+          </div>
+        </div>
+        <div class="work-body">
+          <div class="client">株式会社イーラーニング</div>
+          <div class="work-title-text">創立25周年記念動画</div>
+        </div>
+      </article>
+
+      <!-- ⑥ -->
+      <article class="work-item">
+        <div class="thumb-wrap yt-item" data-video-id="KzozOPCh1hk">
+          <img
+            class="thumb-img"
+            src="https://img.youtube.com/vi/KzozOPCh1hk/hqdefault.jpg"
+            alt="WORK 6"
+          />
+          <div class="preview-container"></div>
+          <div class="thumb-overlay">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"></polygon></svg>
+            </div>
+          </div>
+        </div>
+        <div class="work-body">
+          <div class="client">HIRUME</div>
+          <div class="work-title-text">HIRUME RUNWAY prod by GOTO PRODUCTION </div>
+        </div>
+      </article>
+
+    </section>
+
+    <footer>
+      © <span id="year"></span> NOK.WORKS/ SEVEN CREATIVE STUDIO
+    </footer>
+  </div>
+
+  <script>
+    // 年号
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // パララックス背景
+    const bgVideo = document.getElementById("bgVideo");
+    window.addEventListener("scroll", () => {
+      const y = window.scrollY * 0.12;
+      bgVideo.style.transform = `translateY(${y}px)`;
+    });
+
+    // デバイスが hover 対応かどうか判定
+    const canHover = window.matchMedia("(hover: hover)").matches;
+
+    // YouTubeプレビューロジック
+    document.querySelectorAll(".yt-item").forEach(item => {
+      const videoId = item.dataset.videoId;
+      const previewContainer = item.querySelector(".preview-container");
+
+      let iframe = null;
+
+      function startPreview() {
+        if (!canHover) return; // スマホはプレビューなし
+
+        if (!iframe) {
+          iframe = document.createElement("iframe");
+          iframe.setAttribute(
+            "src",
+            `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=${videoId}&start=0&end=3`
+          );
+          iframe.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture");
+          iframe.setAttribute("allowfullscreen", "false");
+          previewContainer.appendChild(iframe);
+        }
+        previewContainer.classList.add("active");
+      }
+
+      function stopPreview() {
+        previewContainer.classList.remove("active");
+        if (iframe) {
+          iframe.remove();
+          iframe = null;
+        }
+      }
+
+      item.addEventListener("mouseenter", startPreview);
+      item.addEventListener("mouseleave", stopPreview);
+
+      // クリックで通常のYouTubeページを新規タブで開く
+      item.addEventListener("click", () => {
+        window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
+      });
+    });
+  </script>
+</body>
+</html>

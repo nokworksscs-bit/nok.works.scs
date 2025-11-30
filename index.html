@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>NOK / Naoki Hata – Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --fg: #ffffff;
+      --muted: #d0d0d0;
+      --accent: #f5f16b;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif;
+    }
+
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: var(--font);
+      color: var(--fg);
+    }
+
+    /* ▼ 背景動画：確実に最背面 */
+    #bgVideo {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    /* ▼ 左上ロゴ＋メニュー */
+    header {
+      position: fixed;
+      top: 20px;
+      left: 24px;
+      z-index: 20;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-logo {
+      width: 120px;
+      height: auto;
+      filter: drop-shadow(0 0 12px rgba(0,0,0,0.6));
+    }
+
+    nav {
+      display: flex;
+      gap: 22px;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    nav a {
+      color: var(--muted);
+      position: relative;
+      padding-bottom: 3px;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--fg);
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 1px;
+      width: 0;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* ▼ SOUNDボタン：画面下中央 */
+    .sound-toggle-wrap {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+    }
+
+    .sound-toggle {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.35);
+      color: var(--fg);
+      padding: 7px 18px 6px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .sound-toggle-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.4);
+    }
+
+    .sound-on .sound-toggle-indicator {
+      background: #00ff85;
+      box-shadow: 0 0 10px rgba(0,255,133,0.8);
+    }
+
+    /* ▼ footer（任意） */
+    footer {
+      position: fixed;
+      bottom: 8px;
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .header-logo {
+        width: 90px;
+      }
+
+      nav {
+        gap: 16px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ▼ 背景フルスクリーン動画（同階層の mp4 をロード） -->
+  <video id="bgVideo" autoplay muted loop playsinline>
+    <source src="showreel.mp4" type="video/mp4">
+  </video>
+
+  <!-- ▼ 左上：ロゴ＋メニュー -->
+  <header>
+  <div class="header-inner">
+    <!-- ロゴを押すとトップに戻る -->
+    <a href="index.html">
+      <img src="NOK_logo_yellow.png" alt="NOK Logo" class="header-logo">
+    </a>
+
+    <nav>
+      <a href="works.html">WORKS</a>
+      <a href="service.html">SERVICE</a>
+      <a href="contact.html">CONTACT</a>
+    </nav>
+  </div>
+</header>
+
+  <!-- ▼ SOUND ON/OFF ボタン（画面下中央） -->
+  <div class="sound-toggle-wrap">
+    <button id="soundToggle" class="sound-toggle" type="button">
+      <span class="sound-toggle-indicator"></span>
+      <span class="sound-toggle-label">SOUND OFF</span>
+    </button>
+  </div>
+
+  <footer>
+    © <span id="year"></span> NOK.WORKS / SEVEN CREATIVE STUDIO
+  </footer>
+
+  <script>
+    // ▼ 年号自動
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ▼ SOUND ON/OFF の制御
+    (function () {
+      const video = document.getElementById("bgVideo");
+      const btn = document.getElementById("soundToggle");
+      const label = btn.querySelector(".sound-toggle-label");
+
+      let soundOn = false;
+
+      function updateUI() {
+        if (soundOn) {
+          btn.classList.add("sound-on");
+          label.textContent = "SOUND ON";
+        } else {
+          btn.classList.remove("sound-on");
+          label.textContent = "SOUND OFF";
+        }
+      }
+
+      btn.addEventListener("click", function () {
+        soundOn = !soundOn;
+        video.muted = !soundOn;
+        video.play().catch(() => {});
+        updateUI();
+      });
+
+      updateUI();
+    })();
+  </script>
+
+</body>
+</html>
