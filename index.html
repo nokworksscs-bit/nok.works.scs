@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>NOK.WORKS / SEVEN CREATIVE STUDIO – Portfolio</title>
+  <title>NOK / Naoki Hata – Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -14,7 +14,9 @@
     }
 
     * {
-      margin: 0; padding: 0; box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     html, body {
@@ -25,17 +27,23 @@
       color: var(--fg);
     }
 
-    /* ▼ 背景動画：確実に最背面 */
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ▼ 背景ショーリール動画（PC用：トリミングして全面表示） */
     #bgVideo {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover;       /* PCでは画面いっぱい優先（左右トリミング） */
       z-index: 1;
+      background: #000;
     }
 
-    /* ▼ 左上ロゴ＋メニュー */
+    /* ▼ ヘッダー：左上ロゴ＋ナビ */
     header {
       position: fixed;
       top: 20px;
@@ -52,6 +60,7 @@
     .header-logo {
       width: 120px;
       height: auto;
+      display: block;
       filter: drop-shadow(0 0 12px rgba(0,0,0,0.6));
     }
 
@@ -64,14 +73,10 @@
     }
 
     nav a {
-      color: var(--muted);
       position: relative;
       padding-bottom: 3px;
+      color: var(--muted);
       transition: color 0.2s ease;
-    }
-
-    nav a:hover {
-      color: var(--fg);
     }
 
     nav a::after {
@@ -85,11 +90,15 @@
       transition: width 0.25s ease;
     }
 
+    nav a:hover {
+      color: var(--fg);
+    }
+
     nav a:hover::after {
       width: 100%;
     }
 
-    /* ▼ SOUNDボタン：画面下中央 */
+    /* ▼ SOUND ON/OFF ボタン（画面下中央） */
     .sound-toggle-wrap {
       position: fixed;
       bottom: 28px;
@@ -126,7 +135,6 @@
       box-shadow: 0 0 10px rgba(0,255,133,0.8);
     }
 
-    /* ▼ footer（任意） */
     footer {
       position: fixed;
       bottom: 8px;
@@ -138,7 +146,21 @@
       pointer-events: none;
     }
 
+    /* ▼ スマホ用調整（横幅が狭いとき） */
     @media (max-width: 640px) {
+      /* 動画全体を見せる：両端を切らずに黒帯で対応 */
+      #bgVideo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;   /* ← ここがポイント：動画の全体を表示 */
+        background: #000;      /* 上下に黒帯が出ることを想定 */
+      }
+
+      header {
+        top: 14px;
+        left: 12px;
+      }
+
       .header-inner {
         flex-direction: column;
         align-items: flex-start;
@@ -147,11 +169,25 @@
 
       .header-logo {
         width: 90px;
+        filter: drop-shadow(0 0 10px rgba(0,0,0,0.7));
       }
 
       nav {
-        gap: 16px;
+        gap: 14px;
         font-size: 11px;
+      }
+
+      .sound-toggle-wrap {
+        bottom: 18px;
+      }
+
+      .sound-toggle {
+        font-size: 10px;
+        padding-inline: 14px;
+      }
+
+      footer {
+        font-size: 10px;
       }
     }
   </style>
@@ -159,28 +195,26 @@
 
 <body>
 
-  <!-- ▼ 背景フルスクリーン動画（同階層の mp4 をロード） -->
+  <!-- ▼ 背景ショーリール動画 -->
   <video id="bgVideo" autoplay muted loop playsinline>
     <source src="showreel.mp4" type="video/mp4">
   </video>
 
-  <!-- ▼ 左上：ロゴ＋メニュー -->
+  <!-- ▼ 左上：ロゴ＋ナビ -->
   <header>
-  <div class="header-inner">
-    <!-- ロゴを押すとトップに戻る -->
-    <a href="index.html">
-      <img src="NOK_logo_yellow.png" alt="NOK Logo" class="header-logo">
-    </a>
+    <div class="header-inner">
+      <a href="index.html">
+        <img src="NOK_logo_yellow.png" alt="NOK Logo" class="header-logo">
+      </a>
+      <nav>
+        <a href="works.html">WORKS</a>
+        <a href="service.html">SERVICE</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+    </div>
+  </header>
 
-    <nav>
-      <a href="works.html">WORKS</a>
-      <a href="service.html">SERVICE</a>
-      <a href="contact.html">CONTACT</a>
-    </nav>
-  </div>
-</header>
-
-  <!-- ▼ SOUND ON/OFF ボタン（画面下中央） -->
+  <!-- ▼ SOUND ON/OFF ボタン -->
   <div class="sound-toggle-wrap">
     <button id="soundToggle" class="sound-toggle" type="button">
       <span class="sound-toggle-indicator"></span>
@@ -193,10 +227,10 @@
   </footer>
 
   <script>
-    // ▼ 年号自動
+    // 年号
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // ▼ SOUND ON/OFF の制御
+    // SOUNDボタン制御
     (function () {
       const video = document.getElementById("bgVideo");
       const btn = document.getElementById("soundToggle");
@@ -224,6 +258,5 @@
       updateUI();
     })();
   </script>
-
 </body>
 </html>
